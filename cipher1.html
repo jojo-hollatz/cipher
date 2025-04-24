@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vigenère Cipher Tool</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        textarea, input[type="text"], button {
+            width: calc(100% - 12px); /* Adjust for padding */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vigenère Cipher Tool</h1>
+
+        <label for="plaintext">Plaintext:</label>
+        <textarea id="plaintext" placeholder="Enter your plaintext"></textarea>
+
+        <label for="key">Key:</label>
+        <input type="text" id="key" placeholder="Enter your key">
+
+        <button onclick="encrypt()">Encrypt</button>
+        <button onclick="decrypt()">Decrypt</button>
+
+        <h2>Output:</h2>
+        <div id="output"></div>
+    </div>
+
+    <div class="info">
+        <p>A simple Vigenère cipher tool for mobile.</p>
+    </div>
+
+    <script>
+        function vigenere(text, key, encrypt) {
+            let result = "";
+            key = key.toUpperCase();
+            let keyIndex = 0;
+
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+
+                if (char.match(/[a-zA-Z]/)) {
+                    let isUpper = char === char.toUpperCase();
+                    let charCode = char.toUpperCase().charCodeAt(0) - 65; // 0-25
+
+                    let keyChar = key[keyIndex % key.length];
+                    let keyCharCode = keyChar.charCodeAt(0) - 65; // 0-25
+
+                    let shiftedCharCode;
+                    if (encrypt) {
+                        shiftedCharCode = (charCode + keyCharCode) % 26;
+                    } else {
+                        shiftedCharCode = (charCode - keyCharCode + 26) % 26; // Add 26 to handle negative results
+                    }
+
+                    let shiftedChar = String.fromCharCode(shiftedCharCode + 65);
+
+                    result += isUpper ? shiftedChar : shiftedChar.toLowerCase();
+                    keyIndex++;
+                } else {
+                    result += char; // Keep non-alphabetic characters as they are
+                }
+            }
+            return result;
+        }
+
+        function encrypt() {
+            const plaintext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const ciphertext = vigenere(plaintext, key, true);
+            document.getElementById("output").textContent = ciphertext;
+        }
+
+        function decrypt() {
+            const ciphertext = document.getElementById("plaintext").value;
+            const key = document.getElementById("key").value;
+            const plaintext = vigenere(ciphertext, key, false);
+            document.getElementById("output").textContent = plaintext;
+        }
+    </script>
+</body>
+</html>
